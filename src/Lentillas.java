@@ -1,6 +1,5 @@
 
 public class Lentillas extends Producto{
-	protected Lentillas lt;
 	protected String tipo;
 	
 	Lentillas(){
@@ -10,14 +9,6 @@ public class Lentillas extends Producto{
 	public Lentillas(String ID, String nombre, double precio_compra, double precio_venta, int cantidad, String tipo) {
 		super(nombre, ID, precio_compra, precio_venta, cantidad);
 		this.tipo = tipo;
-	}
-	
-	protected Lentillas getLt() {
-		return lt;
-	}
-
-	protected void setCe(Lentillas lt) {
-		this.lt = lt;
 	}
 
 	protected String getTipo() {

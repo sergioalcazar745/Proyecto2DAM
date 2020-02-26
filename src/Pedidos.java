@@ -1,9 +1,9 @@
 import java.util.ArrayList;
+import java.util.Iterator;
 
 public class Pedidos {
 	protected Cliente cl;
 	protected ArrayList <Producto> listaProductos=new ArrayList <Producto>();
-	protected ArrayList <Pedidos> listaPedidos=new ArrayList <Pedidos>();
 	protected String fecha, precio;
 	
 	Pedidos(){
@@ -13,7 +13,6 @@ public class Pedidos {
 	public Pedidos(Cliente cl, ArrayList<Producto> listaProductos, ArrayList<Pedidos> listaPedidos, String fecha) {
 		this.cl = cl;
 		this.listaProductos = listaProductos;
-		this.listaPedidos = listaPedidos;
 		this.fecha = fecha;
 	}
 
@@ -40,14 +39,6 @@ public class Pedidos {
 		this.listaProductos = listaProductos;
 	}
 
-	protected ArrayList<Pedidos> getListaPedidos() {
-		return listaPedidos;
-	}
-
-	protected void setListaPedidos(ArrayList<Pedidos> listaPedidos) {
-		this.listaPedidos = listaPedidos;
-	}
-
 	protected String getFecha() {
 		return fecha;
 	}
@@ -63,10 +54,35 @@ public class Pedidos {
 	protected void setPrecio(String precio) {
 		this.precio = precio;
 	}
-
-	public String toString() {
-		String mostrar = "Lista de pedidos "+listaPedidos+"";
-		return mostrar;
+	
+	public String toString (ArrayList <Pedidos> listaPedidos) {
+		boolean control=true;
+		String resultado="";
+		
+		Iterator <Pedidos> it=listaPedidos.iterator();
+		control=true;
+		
+		System.out.println("");
+		System.out.println("--------------Resumen del Pedido------------");		
+		while(it.hasNext() && control) {
+			
+			Pedidos ped=it.next();
+			
+			System.out.println("Cliente: ");
+			System.out.println("");
+			System.out.println(ped.getCl());
+			System.out.println("");
+			System.out.println("Productos:	");
+			System.out.println("");
+			System.out.println(ped.getListaProductos());
+			System.out.println("-----");
+			System.out.println("");
+			System.out.println("Precio: "+ped.getFecha());
+			System.out.println("");
+			System.out.println("Precio: "+ped.getPrecio());
+		}
+		
+		return resultado;
 	}
 }
 

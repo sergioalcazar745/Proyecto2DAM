@@ -13,6 +13,7 @@ public class Metodos {
 	
 	ArrayList <Persona> Gestion_personas=new ArrayList <Persona>();
 	ArrayList <Producto> Gestion_productos=new ArrayList <Producto>();
+	ArrayList <Pedidos> listaPedidos= new ArrayList<Pedidos>();
 	
 	Administrador ad=new Administrador();
 	Menus menu;
@@ -298,15 +299,18 @@ public class Metodos {
 							
 							Persona p=it.next();
 							
-							if (p.getDNI().equals(DNI)) {
+							if(p instanceof Empleado) {
 								
-								System.out.println("Ese DNI ya esta registrado. Vuelve a intentarlo");
-								dni=true;
-								control=false;
-								
-							}else {
-								control=true;
-							}						
+								if (p.getDNI().equals(DNI)) {
+									
+									System.out.println("Ese DNI ya esta registrado. Vuelve a intentarlo");
+									dni=true;
+									control=false;
+									
+								}else {
+									control=true;
+								}	
+							}												
 						}
 						
 						if(control==true) {
@@ -1995,10 +1999,10 @@ public class Metodos {
 			System.out.println("");
 			System.out.println("--------------Inicio---------------");
 			
-			System.out.println("Usuario:");
+			System.out.println("Usuario (DNI):");
 			usuario=es.recogerTextoSinEspacio();
 			
-			System.out.println("Contrase\u00f1a:");
+			System.out.println("Contrase\u00f1a (ID):");
 			contraseña=es.recogerTextoSinEspacio();
 			
 			Iterator <Persona> it=Gestion_personas.iterator();
@@ -2008,14 +2012,14 @@ public class Metodos {
 				
 				Persona p=it.next();
 				
-				if(((Empleado) p).getTipo()=="empleado") {
+				if(p instanceof Empleado) {
 					
 					if(usuario.equals(((Empleado) p).getDNI()) && contraseña.equals(((Empleado) p).getID())) {
 						control=false;
 						inicio=false;
 					}else {
 						System.out.println("El usuario o contraseña son incorrectos");
-						control=true;
+						inicio=false;
 					}
 				}			
 			}
@@ -2178,11 +2182,9 @@ public class Metodos {
 								
 								Persona p=it.next();
 								
-								if (p.getTelefono().equals(telefono)) {
-									
+								if (p.getTelefono().equals(telefono)) {									
 									System.out.println("El numero de telefono ya esta registrado");
 									Telefono=false;
-									
 								}else {							
 									control=true;								
 								}
@@ -2192,9 +2194,9 @@ public class Metodos {
 								Telefono=false;
 							}
 						}
+						
 					}else if (Telefono==true) {
 						System.out.println("Telefono incorrecto. Vuelve a intentarlo");
-						Telefono=true;
 					}
 					
 				}while(Telefono);
@@ -2463,7 +2465,7 @@ public class Metodos {
 						 Persona c;
 						 c = puntero.next();
 
-						 if(c.getTipo()=="cliente") {
+						 if(c instanceof Cliente) {
 							 
 							 if(c.getNombre().equalsIgnoreCase(name)) {
 								 System.out.println("");
@@ -2514,79 +2516,132 @@ public class Metodos {
 		
 	protected void Pedidos() {
 		ps=new Cliente();
-		Pedidos ped=new Pedidos();
-		String quiere, Fecha;
-		double precio_gafas;
-		boolean cliente=true, producto=true, fecha=true, gafas=true, lentillas=true, otro=true, Precio=true, finalizado=true;
+		String quiere, Fecha, precio = null;
+		int i=0;
+		double precio_gafas=0, precio_lentillas=0, resultado=0;
+		boolean cliente=true, producto=true, fecha=true, gafas=true, lentillas=true, otro=true, Precio=true, correcto=true, control1=true, control=true;
 		
 		ArrayList<Producto> Productos_Cliente=new ArrayList<Producto>();
 		
 		do {
 			
-			System.out.println("Dime el DNI del cliente");
+			System.out.println("Dime el DNI del cliente: ");
 			DNI=es.recogerTextoSinEspacio();
 			
-			Iterator <Persona> it=Gestion_personas.iterator();
-			control=true;
-			
-			while(it.hasNext()) {
-				
-				Persona c=it.next();
-				
-				if(c.getTipo()=="cliente") {
+				if (ps.validar(DNI)==true) {
+					correcto=true;
 					
-					if(c.getDNI().equals(DNI)) {
-					    ((Cliente) ps).setCe(((Cliente) c));
-						control=false;
+				}else {
+					correcto=false;
+				}
+			
+			if (correcto==true) {
+				
+				if (Gestion_personas.size()==0) {
+					cliente=false;
+					
+				}else {
+					
+					Iterator <Persona> it=Gestion_personas.iterator();
+					control=true;
+					i=0;
+					
+					while (it.hasNext() && control) {
+						
+						Persona p=it.next();
+							
+						if (p.getDNI().equals(DNI)) {
+							
+							if(p instanceof Cliente) {
+								ps=(Persona)Gestion_personas.get(i);
+								cliente=false;
+								control=false;
+							}else {
+								i++;
+							}
+								
+						}else {
+							i++;
+							control=true;
+						}													
+					}
+					
+					if(control==true) {
+						cliente=false;
 					}
 				}
+				
+			}else if (correcto==false) {
+				System.out.println("El DNI es incorrecto");
+				
 			}
-			
-			if(control==true) {
-				System.out.println("No existen clientes");
-				System.out.println("--------------------");
-			}else if (control==false) {
-				cliente=false;
-			}
-			
-		}while(cliente);
+				
+		}while(cliente);	
 		
 		do {
+			
+			if(Gestion_productos.size()==0) {
+				System.out.println("No existen productos");
+			}else {
 				
+			}
+			
+			Iterator<Producto>it=Gestion_productos.iterator();			
+			
+			System.out.println("");
+			System.out.println("------Lista de productos---");	
+			while(it.hasNext()) {
+					
+				Producto pdo=it.next();
+				
+				System.out.println("");
+				System.out.println(pdo.toString());
+			}
+			
+			System.out.println("");
 			System.out.println("Dime la ID del producto que quiere el cliente");
 			ID=es.recogerTextoSinEspacio();
 				
-			Iterator<Producto>it=Gestion_productos.iterator();
+			Iterator<Producto>it1=Gestion_productos.iterator();
 			control=true;
+			i=0;
 				
-			while(it.hasNext() && control) {
+			while(it1.hasNext() && control) {
 					
-				Producto pdo=it.next();
+				Producto pdo=it1.next();
 					
 				if(pdo.getID().equals(ID)) {
-					if(pdo.getNombre()=="gafas") {
-						((Gafas) pd).setCe(((Gafas) pdo));
+					
+					if(pdo instanceof Gafas) {
+						Gafas gf=(Gafas) Gestion_productos.get(i);
 						precio_gafas=pdo.getPrecio_venta();
+						Productos_Cliente.add(gf);
+						System.out.println("Hola");
 						gafas=false;
 						control=false;
-					}else {
-						((Lentillas) pd).setCe(((Lentillas) pdo));
+						i++;
+					}else if(pdo instanceof Lentillas){
+						Lentillas lt=(Lentillas) Gestion_productos.get(i);
+						precio_lentillas=pdo.getPrecio_venta();
+						Productos_Cliente.add(lt);
+						System.out.println("Adios");
 						lentillas=false;
 						control=false;
+						i++;
 					}
 				}
 			}
-				
-			if(control==true) {
-				System.out.println("No existen productos");
-				System.out.println("---------------------");
-			}else if(control==false && gafas==false) {
-				Productos_Cliente.add(((Gafas) pd).getGf());
-				double resultado=
-				producto=false;
-			}else if (control==false && lentillas==false) {
-				Productos_Cliente.add(((Lentillas) pd).getLt());
-				producto=false;
+			
+			for (int j= 0; j < Gestion_personas.size(); j++) {
+				if(Gestion_personas.get(j).getDNI().equals(DNI) && Gestion_personas.get(j).getTipo().equals("cliente")) {
+					if(control==false && gafas==false) {
+						resultado+=precio_gafas+((((Cliente) Gestion_personas.get(j)).getOjo_der()+((Cliente) Gestion_personas.get(j)).getOjo_izq())*5);
+						producto=false;
+					}else if (control==false && lentillas==false) {
+						resultado+=precio_lentillas+((((Cliente) Gestion_personas.get(j)).getOjo_der()+((Cliente) Gestion_personas.get(j)).getOjo_izq())*5);
+						producto=false;				
+					}
+				}
 			}
 			
 			if(control==false) {
@@ -2614,7 +2669,7 @@ public class Metodos {
 					
 				}while(querer);
 			}
-				
+			
 		}while(producto);
 			
 		do {
@@ -2631,20 +2686,12 @@ public class Metodos {
 				
 		}while(fecha);
 		
-		Pedidos pedido=new Pedidos(((Cliente) ps).getCe(), Productos_Cliente, Fecha, precio);
-		ped.getListaPedidos().add(pedido);
-		finalizado=false;
-			
-		if(finalizado==false) {
-				
-			Iterator<Pedidos> it=ped.getListaPedidos().iterator();
-			control=true;
-				
-			while(it.hasNext() && control) {
-					
-				Pedidos ps=it.next();
-				System.out.println(ps.getListaPedidos());
-			}
-		}
+		System.out.println("El precio es: "+resultado+"");
+		precio=Double.toString(resultado);
+		
+		Pedidos pedido=new Pedidos(((Cliente) ps), Productos_Cliente, Fecha, precio);
+		listaPedidos.add(pedido);
+		
+		System.out.println(pedido.toString(listaPedidos));
 	}
 }

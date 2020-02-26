@@ -1,6 +1,5 @@
 
 public class Gafas extends Producto{
-	protected Gafas gf;
 	protected String tipo_montura, tipo_cristales;
 
 	Gafas() {
@@ -11,14 +10,6 @@ public class Gafas extends Producto{
 		super(nombre, ID, precio_compra, precio_venta, cantidad);
 		this.tipo_montura = tipo_montura;
 		this.tipo_cristales = cristales;
-	}
-	
-	protected Gafas getGf() {
-		return gf;
-	}
-
-	protected void setCe(Gafas gf) {
-		this.gf = gf;
 	}
 
 	protected String getTipo_montura() {

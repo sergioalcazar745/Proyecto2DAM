@@ -1,6 +1,5 @@
 
 public class Cliente extends Persona{
-	protected Cliente ce;
 	protected String anomalia;
 	protected double ojo_der, ojo_izq;
 	
@@ -36,14 +35,6 @@ public class Cliente extends Persona{
 
 	protected void setOjo_izq(double ojo_izq) {
 		this.ojo_izq = ojo_izq;
-	}
-	
-	protected Cliente getCe() {
-		return ce;
-	}
-
-	protected void setCe(Cliente ce) {
-		this.ce = ce;
 	}
 
 	public String toString() {
