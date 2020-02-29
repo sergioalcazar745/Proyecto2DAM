@@ -2,6 +2,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.Random;
 import java.util.Scanner;
+import java.util.StringTokenizer;
 
 public class Metodos {
 	String estado, tipo, ID, DNI, nombre, apellidos, fecha_nac, domicilio, telefono, inicio_contrato, fecha, año_cont, jornada, turno;
@@ -62,11 +63,12 @@ public class Metodos {
 			System.out.println("");
 			System.out.println("--------------Inicio---------------");
 			
+			es.reocogerTextoEspacios();
 			System.out.println("Usuario:");
-			usuario=es.recogerTextoSinEspacio();
+			usuario=es.reocogerTextoEspacios();
 			
 			System.out.println("Contrase\u00f1a:");
-			contraseña=es.recogerTextoSinEspacio();			
+			contraseña=es.reocogerTextoEspacios();			
 				
 			
 				if (usuario.equals(ad.getUsuario()) && contraseña.equals(ad.getContraseña())) {
@@ -138,6 +140,10 @@ public class Metodos {
 			break;
 			
 			case "6":
+				cambiarUsuarioContrasenaAdmin();
+			break;
+			
+			case "7":
 				Admin=false;
 			break;
 			
@@ -148,10 +154,29 @@ public class Metodos {
 		}while(Admin);
 	}
 	
+	protected void cambiarUsuarioContrasenaAdmin() {
+		ps=new Empleado();
+		String usuario, contraseña;
+		
+		es.reocogerTextoEspacios();
+		System.out.println("Usuario nuevo: ");
+		usuario=es.reocogerTextoEspacios();
+		
+		ad.setUsuario(usuario);
+		
+		System.out.println("Contraseña nueva: ");
+		contraseña=es.reocogerTextoEspacios();
+			
+		ad.setContraseña(contraseña);
+		
+		System.out.println(ad.getUsuario());
+		System.out.println(ad.getContraseña());
+	}
+	
 	protected void crearEmpleado() {
 		ps=new Empleado();
 		Random rd=new Random();
-		boolean crear=true, Telefono=true, dni=true, Horas=true, Turno=true, 
+		boolean crear=true, Telefono=true, dni=true, Horas=true, Turno=true, Apellidos=true, otra_persona=true,
 		id=true, newID=true, Id=true, Nombre=true, Fecha=true, correcto=true;
 		String desear, hora;
 		
@@ -205,10 +230,31 @@ public class Metodos {
 					System.out.println("El nombre debe ser una cadena de caracteres");
 				}
 				
-			}while(Nombre==true);
+			}while(Nombre);
 			
-			System.out.println("Apellidos: ");
-			apellidos=es.reocogerTextoEspacios();
+			do {
+				
+				System.out.println("Apellidos: ");
+				apellidos=es.reocogerTextoEspacios();			
+				
+				StringTokenizer tokens=new StringTokenizer(apellidos);
+				control=true;
+				
+				while(tokens.hasMoreTokens() && control){
+					
+					String cadena=tokens.nextToken();
+					
+					if (ps.comprobarCaracter(cadena)==true) {
+						control=true;
+						Apellidos=false;
+					}else {
+						System.out.println("El nombre debe ser una cadena de caracteres");
+						Apellidos=true;
+						control=false;
+					}
+			    }
+				
+			}while(Apellidos);			
 			
 			do {
 				
@@ -331,15 +377,12 @@ public class Metodos {
 				System.out.println("Dime la fecha de contrato. Formato: dd/mm/YYYY");
 				inicio_contrato=es.recogerTextoSinEspacio();
 				
-				if(ps.comprobarFecha(inicio_contrato)==true) {
-					Fecha=false;					
-						
-					String año_nacimiento=fecha_nac.substring(6,10);
-					String año_contrato=inicio_contrato.substring(6,10);
+				if(ps.comprobarFecha(inicio_contrato)==true) {					
 					
-					if (ps.comprobarMayoriaEdad(año_nacimiento, año_contrato)==true) {
+					if (ps.comprobarMayoriaEdad(fecha_nac, inicio_contrato)==true) {
 						Fecha=false;
 					}else {
+						System.out.println("Adios");
 						Fecha=true;
 					}
 					
@@ -397,19 +440,24 @@ public class Metodos {
 			
 			Persona e2=new Empleado(estado, tipo, ID, DNI, nombre, apellidos, fecha_nac, domicilio, telefono, inicio_contrato, turno, jornada, horas );
 			
-			System.out.println("");
-			System.out.print("Deseas crear otro empleado. Pulsa [1] en caso afirmativo sino pulsa [2]: ");
-			desear=es.recogerTextoSinEspacio();
-			
-				if(desear.equals("1")) {
-					Gestion_personas.add(e2);
-					crear=true;
-				}else if (desear.equals("2")) {
-					Gestion_personas.add(e2);
-					crear=false;
-				}else {
-					System.out.println("El numero introducido incorrecto");
-				}
+			while(otra_persona) {
+				
+				System.out.println("");
+				System.out.print("Deseas crear otro empleado. Pulsa [1] en caso afirmativo sino pulsa [2]: ");
+				desear=es.recogerTextoSinEspacio();
+				
+					if(desear.equals("1")) {
+						Gestion_personas.add(e2);
+						crear=true;
+						otra_persona=false;
+					}else if (desear.equals("2")) {
+						Gestion_personas.add(e2);
+						crear=false;
+						otra_persona=false;
+					}else {
+						System.out.println("El numero introducido incorrecto");
+					}				
+			}
 				
 		}while(crear);		
 	}
@@ -1311,7 +1359,27 @@ public class Metodos {
 				break;
 				
 				case "4":
-					mostrarProductos();
+					
+					System.out.println("Si quieres ver todos los productos pulsa 1.\nSi quieres ver solo las gafas pulse 2. Si quieres ver solo las lentillas pulse 3.");
+					String mostrar=es.recogerTextoSinEspacio();
+					
+					switch(mostrar) {
+					case "1":
+						mostrarProductos();
+					break;
+					
+					case "2":
+						mostrarGafas();
+					break;
+					
+					case "3":
+						mostrarLentillas();
+					break;
+					
+					default:
+						System.out.println();
+					}
+					
 				break;
 				
 				case "5":
@@ -1327,10 +1395,11 @@ public class Metodos {
 	
 	protected void añadirGafas() {
 		pd=new Gafas();
+		ps= new Empleado();
 		Random rd=new Random();
 		String producto, cantidad1, compra1, venta1, desear, montura, cristales;
-		int cantidad;
-		double compra, venta;
+		int cantidad = 0, cantidad_comprada=0;
+		double compra = 0, venta = 0;
 		boolean productos=true, Cantidad=true, Compra=true, Venta=true, Montura=true, Cristales=true, Id=true, nombre=true;
 		
 		do {
@@ -1372,12 +1441,18 @@ public class Metodos {
 				System.out.println("Cantidad");
 				cantidad1=es.recogerTextoSinEspacio();
 				
-				cantidad=Integer.parseInt(cantidad1);
-				if(cantidad<0) {
-					System.out.println("La cantidad debe ser mayor de 0");
+				if(ps.comprobarNumero(cantidad1)) {					
+					cantidad=Integer.parseInt(cantidad1);
+					
+					if(cantidad<=0) {
+						System.out.println("Debe ser mayor que 0");
+					}else {
+						Cantidad=false;
+					}
+					
 				}else {
-					Cantidad=false;
-				}			
+					System.out.println("La cantidad debe ser un numero");
+				}
 				
 			}while(Cantidad);
 			
@@ -1385,12 +1460,18 @@ public class Metodos {
 				
 				System.out.println("Precio de venta: ");
 				venta1=es.recogerTextoSinEspacio();
-				
-				venta=Double.parseDouble(venta1);
-				if(venta<0) {
-					System.out.println("La cantidad debe ser mayor de 0");
+		
+				if(pd.esDecimal(venta1)==true) {					
+					venta=Double.parseDouble(venta1);
+					
+					if(venta<=0) {
+						System.out.println("Debe ser mayor que 0");
+					}else {
+						Venta=false;
+					}
+					
 				}else {
-					Venta=false;
+					System.out.println("La cantidad debe ser un numero");
 				}
 				
 			}while(Venta);
@@ -1400,11 +1481,17 @@ public class Metodos {
 				System.out.println("Precio de compra: ");
 				compra1=es.recogerTextoSinEspacio();
 				
-				compra=Double.parseDouble(compra1);
-				if(compra<0) {
-					System.out.println("La cantidad debe ser mayor de 0");
+				if(pd.esDecimal(venta1)==true) {					
+					venta=Double.parseDouble(venta1);
+					
+					if(venta<=0) {
+						System.out.println("Debe ser mayor que 0");
+					}else {
+						Compra=false;
+					}
+					
 				}else {
-					Compra=false;
+					System.out.println("La cantidad debe ser un numero");
 				}		
 				
 			}while(Compra);
@@ -1424,18 +1511,25 @@ public class Metodos {
 			
 			do {
 				
-				System.out.println("Tipo de cristales: ");
+				System.out.println("Tipo de cristales: Si son unifocales pulsa 1. Si son bifocales pulsa 2. Si son progresivas pulsa 3.");
 				cristales=es.recogerTextoSinEspacio();
 				
-				if (pd.comprobarCaracter(cristales)==true) {
+				if(cristales.equals("1")) {
+					cristales="unifocales";
+					Cristales=false;
+				}else if (cristales.equals("2")) {
+					cristales="bifocales";
+					Cristales=false;
+				}else if (cristales.equals("3")) {
+					cristales="progresivas";
 					Cristales=false;
 				}else {
-					System.out.println("Los cristales debe ser una cadena de caracteres");
+					System.out.println("Numero incorrecto");
 				}
 				
 			}while(Cristales);
 						
-			Producto pd1=new Gafas(ID, producto, compra, venta, cantidad, montura, cristales);
+			Producto pd1=new Gafas(ID, producto, compra, venta, cantidad, cantidad_comprada, montura, cristales);
 			
 			System.out.print("¿Deseas introducir otra gafa?. Pulsa 1 en caso afirmativo sino pulsa 2: ");
 			desear=es.recogerTextoSinEspacio();
@@ -1455,10 +1549,11 @@ public class Metodos {
 	
 	protected void añadirLentillas() {
 		pd=new Lentillas();
+		ps=new Empleado();
 		Random rd=new Random();
 		String lentilla, producto, cantidad1, compra1, venta1, desear;
-		int cantidad;
-		double compra, venta, total, beneficio, ganancias=0;
+		int cantidad = 0, cantidad_comprada = 0;
+		double compra = 0, venta = 0, total, beneficio, ganancias=0;
 		boolean productos=true, Cantidad=true, Compra=true, Venta=true, Id=true, nombre=true, lentillas=true, desea=true;
 		
 		do {
@@ -1500,12 +1595,18 @@ public class Metodos {
 				System.out.println("Cantidad");
 				cantidad1=es.recogerTextoSinEspacio();
 				
-				cantidad=Integer.parseInt(cantidad1);
-				if(cantidad<0) {
-					System.out.println("La cantidad debe ser mayor de 0");
+				if(ps.comprobarNumero(cantidad1)) {					
+					cantidad=Integer.parseInt(cantidad1);
+					
+					if(cantidad<=0) {
+						System.out.println("Debe ser mayor que 0");
+					}else {
+						Cantidad=false;
+					}
+					
 				}else {
-					Cantidad=false;
-				}			
+					System.out.println("La cantidad debe ser un numero");
+				}		
 				
 			}while(Cantidad);
 			
@@ -1514,12 +1615,18 @@ public class Metodos {
 				System.out.println("Precio de venta: ");
 				venta1=es.recogerTextoSinEspacio();
 				
-				venta=Double.parseDouble(venta1);
-				if(venta<0) {
-					System.out.println("La cantidad debe ser mayor de 0");
+				if(pd.esDecimal(venta1)==true) {					
+					venta=Double.parseDouble(venta1);
+					
+					if(venta<=0) {
+						System.out.println("Debe ser mayor que 0");
+					}else {
+						Venta=false;
+					}
+					
 				}else {
-					Venta=false;
-				}
+					System.out.println("La cantidad debe ser un numero");
+				}	
 				
 			}while(Venta);
 			
@@ -1528,12 +1635,18 @@ public class Metodos {
 				System.out.println("Precio de compra: ");
 				compra1=es.recogerTextoSinEspacio();
 				
-				compra=Double.parseDouble(compra1);
-				if(compra<0) {
-					System.out.println("La cantidad debe ser mayor de 0");
+				if(pd.esDecimal(venta1)==true) {					
+					venta=Double.parseDouble(venta1);
+					
+					if(venta<=0) {
+						System.out.println("Debe ser mayor que 0");
+					}else {
+						Compra=false;
+					}
+					
 				}else {
-					Compra=false;
-				}		
+					System.out.println("La cantidad debe ser un numero");
+				}	
 				
 			}while(Compra);
 			
@@ -1554,7 +1667,7 @@ public class Metodos {
 				
 			}while(lentillas);
 						
-			Producto pd1=new Lentillas(ID, producto, compra, venta, cantidad, tipo);
+			Producto pd2=new Lentillas(ID, producto, compra, venta, cantidad, cantidad_comprada, tipo);
 			
 			while(desea==true) {
 				
@@ -1563,11 +1676,11 @@ public class Metodos {
 				desear= es.recogerTextoSinEspacio();
 				
 				if (desear.equals("1")) {
-					Gestion_productos.add(pd1);
+					Gestion_productos.add(pd2);
 					productos=true;
 					desea=false;
 				}else if (desear.equals("2")){
-					Gestion_productos.add(pd1);
+					Gestion_productos.add(pd2);
 					productos=false;
 					desea=false;
 				}else {
@@ -1592,9 +1705,45 @@ public class Metodos {
 		while(it.hasNext()) {
 			
 			Producto pd=it.next();
-			System.out.println("");
 			System.out.println(pd.toString());
+		}
+	}
+	
+	protected void mostrarGafas(){
+		
+		Iterator<Producto>it=Gestion_productos.iterator();
+		
+		if (Gestion_productos.size()==0) {
+			System.out.println("No existen productos");
 			System.out.println("");
+		}
+		
+		while(it.hasNext()) {
+			
+			Producto pd=it.next();
+
+			if(pd instanceof Gafas) {
+				System.out.println(pd.toString());
+			}
+		}
+	}
+	
+	protected void mostrarLentillas() {
+		
+		Iterator<Producto>it=Gestion_productos.iterator();
+		
+		if (Gestion_productos.size()==0) {
+			System.out.println("No existen productos");
+			System.out.println("");
+		}
+		
+		while(it.hasNext()) {
+			
+			Producto pd=it.next();
+
+			if(pd instanceof Lentillas) {
+				System.out.println(pd.toString());
+			}
 		}
 	}
 	
@@ -2015,11 +2164,13 @@ public class Metodos {
 				if(p instanceof Empleado) {
 					
 					if(usuario.equals(((Empleado) p).getDNI()) && contraseña.equals(((Empleado) p).getID())) {
+						switchEmpleado();
 						control=false;
 						inicio=false;
 					}else {
 						System.out.println("El usuario o contraseña son incorrectos");
 						inicio=false;
+						control=false;
 					}
 				}			
 			}
@@ -2027,10 +2178,7 @@ public class Metodos {
 			if(control==true) {
 				System.out.println("No existe el empleado");
 				System.out.println("");
-				inicio=false;
-				
-			}else if(control==false) {
-				switchEmpleado();
+				inicio=false;				
 			}
 		
 		}while(inicio); 
@@ -2052,19 +2200,19 @@ public class Metodos {
 				break;
 				
 				case "2":
-					bajaCliente();
-				break;
-				
-				case "3":
 					modificarCliente();
 				break;
 				
-				case "4":
+				case "3":
 					listadoClientes();
 				break;
 				
-				case "5":
+				case "4":
 					Pedidos();
+				break;
+				
+				case "5":
+					mostrarPedidos();
 				break;
 				
 				case "6":
@@ -2159,17 +2307,18 @@ public class Metodos {
 				domicilio=es.reocogerTextoEspacios();								
 				
 				do {
+					correcto=true;
 					
 					System.out.println("Tel\u00e9fono movil: ");
 					telefono=es.recogerTextoSinEspacio();
 					
 					if (ps.comprobarTelefono(telefono)==true) {
-						Telefono=false;
+						correcto=false;
 					}else {
-						Telefono=true;
+						correcto=true;
 					}
 					
-					if (Telefono==false) {
+					if (correcto==false) {
 						
 						if (Gestion_personas.size()==0) {
 							Telefono=false;
@@ -2184,22 +2333,20 @@ public class Metodos {
 								
 								if (p.getTelefono().equals(telefono)) {									
 									System.out.println("El numero de telefono ya esta registrado");
-									Telefono=false;
+									control=false;
+									Telefono=true;
 								}else {							
-									control=true;								
+									control=true;
+									Telefono=false;
 								}
-							}
-							
-							if (control==true) {
-								Telefono=false;
 							}
 						}
 						
-					}else if (Telefono==true) {
+					}else if (correcto==true) {
 						System.out.println("Telefono incorrecto. Vuelve a intentarlo");
 					}
 					
-				}while(Telefono);
+				}while(correcto);
 				
 				do {
 					
@@ -2296,7 +2443,6 @@ public class Metodos {
 				anomalia=es.reocogerTextoEspacios();
 				
 				Persona c2=new Cliente(tipo, ID, DNI, nombre, apellidos, fecha_nac, domicilio, telefono, anomalia, ojo_izq, ojo_der);
-				Gestion_personas.add(c2);
 				
 				System.out.println("");
 				System.out.print("Deseas crear otro cliente. Pulsa [1] en caso afirmativo sino pulsa [2]: ");
@@ -2317,127 +2463,207 @@ public class Metodos {
 	protected void modificarCliente() {
 			menu=new Menus();
 			String ide, name, opc;
-			boolean Telefono=true;
+			boolean Telefono=true, encontrado=true, modificar=true;
+			
+		do {
 			
 			System.out.println("Dime el nombre del contacto que quieres modificar:");
 			name = es.recogerTextoSinEspacio();
 			
-			Iterator<Persona> puntero = Gestion_personas.iterator();
+			Iterator <Persona> it=Gestion_personas.iterator();
 			control=true;
 			
-			while (puntero.hasNext() && control) {
+			while(it.hasNext() && control) {
 				
-				Persona c3= puntero.next();
+				Persona p=it.next();
 				
-				if(c3.getNombre().equalsIgnoreCase(name)) {
-					System.out.println(c3.toString());
-					System.out.println("//-------------------------//");
+				if(p instanceof Cliente) {
+					
+					if(p.getNombre().equalsIgnoreCase(name)) {
+						System.out.println("Hola");
+						System.out.println(p.toString());
+						System.out.println("//-------------------------//");
+						encontrado=true;
+						
+					}else {
+						System.out.println("Adios");
+						control=true;
+						encontrado=false;
+					}
+					
+				}else {
+					System.out.println("No existen clientes con ese nombre");
+					control=false;
+					encontrado=false;
 				}
 			}
 			
-			System.out.println("Dime el id del contacto que quieres modificar: ");
-			ide = es.recogerTextoSinEspacio();
+			if(encontrado==true) {
+				
+				System.out.println("Dime el id del contacto que quieres modificar: ");
+				ide = es.recogerTextoSinEspacio();
+				
+				Iterator<Persona>ite=Gestion_personas.iterator();
+				control=true;
+				
+				while(ite.hasNext() && control) {
+					
+					Persona p=ite.next();
+					
+					if(p instanceof Cliente) {
 						
-			System.out.println("Puedes modificar:");
-			System.out.println("1. Nombre");
-			System.out.println("2. Apellidos");
-			System.out.println("3. Telefono");
-			System.out.println("4. Domicilio");
-			opcion = es.recogerTextoSinEspacio();
-			
-			Iterator<Persona> puntero2 = Gestion_personas.iterator();
-			
-			while (puntero2.hasNext()) {
-				if(opcion.equals("1")) {
-				Persona c4;
-				c4 = puntero2.next();
-				if(c4.getID()==ide) {
-					System.out.println("Dime el nuevo nombre: ");
-					nombre= es.reocogerTextoEspacios();
-					c4.setNombre(nombre);
-					System.out.println("Modificado correctamente");
-					System.out.println(c4.toString());
-					}		
-				}	else if(opcion.equals("2")) {
-					Persona c4;
-					c4 = puntero2.next();
-					if(c4.getID()==ide) {
-					System.out.println("Dime los nuevos apellidos: ");
-					apellidos= es.reocogerTextoEspacios();
-					c4.setApellidos(apellidos);
-					System.out.println("Modificado correctamente");
-					System.out.println(c4.toString());
-					}
-				}	else if(opcion.equals("4")) {
-					Persona c4;
-					c4 = puntero2.next();
-					if(c4.getID()==ide) {
-					System.out.println("Dime el nuevo domicilio: ");
-					domicilio= es.reocogerTextoEspacios();
-					c4.setDomicilio(domicilio);
-					System.out.println("Modificado correctamente");
-					System.out.println(c4.toString());
-					}
-				}	else if(opcion.equals("3")) {
-					Persona c4;
-					c4 = puntero2.next();
-					if(c4.getID()==ide) {
+						if(p.getID().equals(ide)) {						
+						boolean bucle=true;
 						do {
+							
 							System.out.println("");
-							System.out.println("Dime el nuevo tel\u00e9fono movil: ");
-							telefono=es.reocogerTextoEspacios();
+							System.out.println("Puedes modificar:");
+							System.out.println("1. Nombre");
+							System.out.println("2. Apellidos");
+							System.out.println("3. Telefono");
+							System.out.println("4. Domicilio");
+							opcion = es.recogerTextoSinEspacio();
 							
-							if (ps.comprobarTelefono(telefono)==true) {
-								Telefono=false;
-							}else {
-								Telefono=true;
-							}
-						
-						if (Telefono==false) {
-						
-							if (Gestion_personas.size()==0) {
-								Telefono=false;
-							}else {
+							switch (opcion){
 							
-								Iterator <Persona> it=Gestion_personas.iterator();
-								control=true;
-								
-								while (it.hasNext() && control) {
-								
-								Persona p=it.next();
-								
-									if (p.getTelefono().equals(telefono)) {
+								case "1":
+									boolean Nombre=true;
+									do {
+										
+										System.out.println("Dime el nuevo nombre: ");
+										nombre= es.reocogerTextoEspacios();
+										
+										if (ps.comprobarCaracter(nombre)==true) {
+											p.setNombre(nombre);
+											Nombre=false;
+										}else {
+											System.out.println("El nombre debe ser una cadena de caracteres");
+										}
+										
+									}while(Nombre);
 									
-									System.out.println("El numero de telefono ya esta registrado.");
-									System.out.println("------------------------------------------");
+									System.out.println("Modificado correctamente");
+									System.out.println(p.toString());
 									
-									}else { 
-									control=true; 
-									}
-								}
-							
-								if (control==true) {
-									Telefono=false;
-								}
+								break;
+								
+								case "2":
+									boolean Apellidos=true;
+									do {
+										
+										System.out.println("Dime los nuevos apellidos: ");
+										apellidos= es.reocogerTextoEspacios();
+										
+										StringTokenizer tokens=new StringTokenizer(apellidos);
+										control=true;
+										
+										while(tokens.hasMoreTokens() && control){
+											
+											String cadena=tokens.nextToken();
+											
+											if (ps.comprobarCaracter(cadena)==true) {
+												control=true;
+											}else {
+												System.out.println("El nombre debe ser una cadena de caracteres");
+												Apellidos=true;
+												control=false;
+											}
+									    }
+										
+										if(control==true) {
+											p.setApellidos(apellidos);
+											System.out.println("Modificado correctamente");
+											System.out.println(p.toString());
+											Apellidos=false;
+										}										
+										
+									}while(Apellidos);									
+									
+								break;
+								
+								case "3":
+									boolean correcto=true;
+									do {
+										System.out.println("");
+										System.out.println("Dime el nuevo tel\u00e9fono movil: ");
+										telefono=es.reocogerTextoEspacios();
+										
+										if (ps.comprobarTelefono(telefono)==true) {
+											correcto=false;
+										}else {
+											correcto=true;
+										}
+									
+										if (correcto==false) {
+										
+											if (Gestion_personas.size()==0) {
+												Telefono=false;
+											}else {
+											
+												Iterator <Persona> it1=Gestion_personas.iterator();
+												control=true;
+												
+												while (it1.hasNext() && control) {
+												
+												Persona p1=it.next();
+												
+													if (p1.getTelefono().equals(telefono)) {
+													
+													System.out.println("El numero de telefono ya esta registrado.");
+													System.out.println("------------------------------------------");
+													control=false;
+													
+													}else { 
+														control=true; 
+													}
+												}
+											
+												if (control==true) {
+													Telefono=false;
+												}
+											}
+											
+										}else if (correcto==true) {
+											System.out.println("Telefono incorrecto. Vuelve a intentarlo.");
+											System.out.println("-------------------------------------------");
+											Telefono=true;
+										}
+									
+									}while(Telefono);
+									
+								System.out.println("Modificado correctamente");
+								System.out.println(p.toString());
+								inicio=true;
+									
+								break;
+								
+								case "4":
+										
+								System.out.println("Dime el nuevo domicilio: ");
+								domicilio= es.reocogerTextoEspacios();
+									
+								p.setDomicilio(domicilio);
+								System.out.println("Modificado correctamente");
+								System.out.println(p.toString());
+									
+								break;
+								
+								default:
+									System.out.println("Numero incorrecto");
 							}
-						}else if (Telefono==true) {
-							System.out.println("Telefono incorrecto. Vuelve a intentarlo.");
-							System.out.println("-------------------------------------------");
-							Telefono=true;
+							
+						}while(bucle);
 						}
-						
-						}while(Telefono);
-						
-					System.out.println("Modificado correctamente");
-					System.out.println(c4.toString());
-					inicio=true;
 					}
 				}
+				
+				Iterator<Persona> puntero2 = Gestion_personas.iterator();
+				
+			}else if (encontrado==false) {
+				modificar=false;
 			}
-	}
-		
-	protected void bajaCliente() {
 			
+		}while (modificar);
 	}
 		
 	protected void listadoClientes() {
@@ -2488,21 +2714,21 @@ public class Metodos {
 				 break;
 		
 				 case "2":
+					encontrado=true;
 					Iterator <Persona> it= Gestion_personas.iterator();
-					control=true;
 			
 					 if (Gestion_personas.size()==0) {
 						 System.out.println("No hay personas.");
 						 System.out.println("");
 					 }
 			
-					 while(it.hasNext() && control) {
+					 while(it.hasNext()) {
 			
 						 Persona p=it.next();
 			
-						 if(p.getTipo().equals("cliente")) {
-							 System.out.println(p.toString());
+						 if(p instanceof Cliente) {
 							 System.out.println("");
+							 System.out.println(p.toString());
 							 encontrado=false;
 						 	}
 					 }
@@ -2510,13 +2736,15 @@ public class Metodos {
 					 if(encontrado==true) {
 						 System.out.println("No existen clientes");
 					 }
+					 
 				 break;
 			}
 	}
 		
 	protected void Pedidos() {
 		ps=new Cliente();
-		String quiere, Fecha, precio = null;
+		Cliente cl=new Cliente();
+		String quiere, Fecha, precio = null, llevar;
 		int i=0;
 		double precio_gafas=0, precio_lentillas=0, resultado=0;
 		boolean cliente=true, producto=true, fecha=true, gafas=true, lentillas=true, otro=true, Precio=true, correcto=true, control1=true, control=true;
@@ -2553,7 +2781,7 @@ public class Metodos {
 						if (p.getDNI().equals(DNI)) {
 							
 							if(p instanceof Cliente) {
-								ps=(Persona)Gestion_personas.get(i);
+								cl=(Cliente) p;
 								cliente=false;
 								control=false;
 							}else {
@@ -2565,15 +2793,14 @@ public class Metodos {
 							control=true;
 						}													
 					}
-					
-					if(control==true) {
-						cliente=false;
-					}
 				}
 				
 			}else if (correcto==false) {
-				System.out.println("El DNI es incorrecto");
-				
+				System.out.println("El DNI es incorrecto");				
+			}
+			
+			if(control==true) {
+				System.out.println("El DNI de cliente no esta registrado");
 			}
 				
 		}while(cliente);	
@@ -2604,7 +2831,6 @@ public class Metodos {
 				
 			Iterator<Producto>it1=Gestion_productos.iterator();
 			control=true;
-			i=0;
 				
 			while(it1.hasNext() && control) {
 					
@@ -2613,21 +2839,69 @@ public class Metodos {
 				if(pdo.getID().equals(ID)) {
 					
 					if(pdo instanceof Gafas) {
-						Gafas gf=(Gafas) Gestion_productos.get(i);
+						Gafas gf=(Gafas) pdo;
 						precio_gafas=pdo.getPrecio_venta();
-						Productos_Cliente.add(gf);
-						System.out.println("Hola");
-						gafas=false;
-						control=false;
-						i++;
+						
+						do {
+							producto=true;
+							System.out.println("¿Cuantos quieres llevarte?");
+							llevar=es.recogerTextoSinEspacio();
+							if(ps.comprobarNumero(llevar)) {					
+								int numero=Integer.parseInt(llevar);
+								
+								if(numero<=0) {
+									System.out.println("Debe ser mayor que 0");
+								}else {
+									int cantidad=pdo.getCantidad();
+									System.out.println(cantidad);
+									if(numero>cantidad) {
+										System.out.println("No es posible llevarte mas de lo que tenemos");
+									}else {										
+										gf.setCantidad(cantidad-numero);
+										Productos_Cliente.add(gf);
+										pdo.setCantidad_comprada(numero);
+										gafas=false;
+										control=false;
+										producto=false;
+									}
+								}
+								
+							}else {
+								System.out.println("La cantidad debe ser un numero");
+							}
+						}while(producto);
+
 					}else if(pdo instanceof Lentillas){
-						Lentillas lt=(Lentillas) Gestion_productos.get(i);
+						Lentillas lt = (Lentillas) pdo;
 						precio_lentillas=pdo.getPrecio_venta();
-						Productos_Cliente.add(lt);
-						System.out.println("Adios");
-						lentillas=false;
-						control=false;
-						i++;
+						do {
+							producto=true;
+							System.out.println("¿Cuantos quieres llevarte?");
+							llevar=es.recogerTextoSinEspacio();
+							if(ps.comprobarNumero(llevar)) {					
+								int numero=Integer.parseInt(llevar);
+								
+								if(numero<=0) {
+									System.out.println("Debe ser mayor que 0");
+								}else {
+									int cantidad=pdo.getCantidad();
+									System.out.println(cantidad);
+									if(numero>cantidad) {
+										System.out.println("No es posible llevarte mas de lo que tenemos");
+									}else {										
+										lt.setCantidad(cantidad-numero);
+										Productos_Cliente.add(lt);
+										pdo.setCantidad_comprada(numero);
+										lentillas=false;
+										control=false;
+										producto=false;
+									}
+								}
+								
+							}else {
+								System.out.println("La cantidad debe ser un numero");
+							}
+						}while(producto);						
 					}
 				}
 			}
@@ -2689,9 +2963,31 @@ public class Metodos {
 		System.out.println("El precio es: "+resultado+"");
 		precio=Double.toString(resultado);
 		
-		Pedidos pedido=new Pedidos(((Cliente) ps), Productos_Cliente, Fecha, precio);
+		Pedidos pedido=new Pedidos(cl, Productos_Cliente, Fecha, precio);
 		listaPedidos.add(pedido);
 		
+		System.out.println("");	
+		System.out.println("Cliente: ");
+		System.out.println("");
+		System.out.println(cl);
+		System.out.println("");
+		System.out.println("Productos: ");
+		System.out.println("");
+		
+		for (Producto p: Productos_Cliente) {
+			System.out.println(p.toString());
+			System.out.println("");
+		}
+		
+		System.out.println("Fecha: "+Fecha);
+		System.out.println("");
+		System.out.println("Precio: "+precio);
+	}
+	
+	protected void mostrarPedidos() {
+		Pedidos pedido=new Pedidos();
+		
+		System.out.println("--------------Resumen del Pedido------------");
 		System.out.println(pedido.toString(listaPedidos));
 	}
 }

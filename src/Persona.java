@@ -134,7 +134,7 @@ abstract class Persona {
 			
 			miNumero = Integer.parseInt(telefono.substring(0,1));
 			
-			if (telefono.length()==9 && miNumero==6 || miNumero==7) {
+			if (telefono.length()==9 && (miNumero==6 || miNumero==7)) {
 				valido=true;
 			}else {
 				valido=false;
@@ -167,6 +167,18 @@ abstract class Persona {
 				valido=dia>0 && dia<=diaMes[mes-1];
 			}
 			
+			if(ano<1900 && ano>2020) {
+				valido=false;
+			}else {
+				valido=true;
+			}
+			
+			if(mes<1 && mes>12) {
+				valido=false;
+			}else {
+				valido=true;
+			}
+			
 		}else {
 			valido=false;
 		}
@@ -174,20 +186,25 @@ abstract class Persona {
 		return valido;
 	}
 	
-	protected boolean comprobarMayoriaEdad(String a, String a1) {
+	protected boolean comprobarMayoriaEdad(String nacimiento, String contrato) {
 		boolean valido=true;
 		
-		int nac=Integer.parseInt(a);
-		int cont=Integer.parseInt(a1);
+		String año_nacimiento=nacimiento.substring(6,10);
+		String año_contrato=contrato.substring(6,10);
 		
-		if (cont-nac<18) {
-			System.out.println("Debe ser mayor de edad.");
-			System.out.println("-------------------------------------------------");
+		int año_nac=Integer.parseInt(año_nacimiento);
+		int año_con=Integer.parseInt(año_contrato);
+		
+		if(año_con-año_nac<18) {
+			System.out.println("Debe ser mayor de edad");
+			System.out.println("-----------------------");
 			valido=false;
 		}else {
 			valido=true;
 		}
+		
 		return valido;
+		
 	}
 	
 	protected boolean comprobarHoras(String s) {

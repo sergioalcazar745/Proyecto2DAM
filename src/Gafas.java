@@ -6,8 +6,8 @@ public class Gafas extends Producto{
 		
 	}
 
-	public Gafas(String ID, String nombre, double precio_compra, double precio_venta, int cantidad, String tipo_montura, String cristales) {
-		super(nombre, ID, precio_compra, precio_venta, cantidad);
+	public Gafas(String nombre, String ID, double precio_compra, double precio_venta, int cantidad, int cantidad_comprada, String tipo_montura, String cristales) {
+		super(nombre, ID, precio_compra, precio_venta, cantidad, cantidad_comprada);
 		this.tipo_montura = tipo_montura;
 		this.tipo_cristales = cristales;
 	}
@@ -29,6 +29,6 @@ public class Gafas extends Producto{
 	}
 
 	public String toString () {
-		return "ID: "+ID+"\nNombre: "+nombre+"\nCantidad: "+cantidad+"\nPrecio de venta: "+precio_venta+"\nPrecio de compra: "+precio_compra+"\nMarca de montura: "+tipo_montura+"\nMarca de cristales: "+tipo_cristales+"";
+		return "ID: "+ID+"\nNombre: "+nombre+"\nCantidad: "+cantidad+"\nCantidad comprada: "+cantidad_comprada+"\nPrecio de venta: "+precio_venta+"\nPrecio de compra: "+precio_compra+"\nMarca de montura: "+tipo_montura+"\nMarca de cristales: "+tipo_cristales+"\n\n";
 	}
 }
